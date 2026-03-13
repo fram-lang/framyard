@@ -1,0 +1,52 @@
+{# This file is part of FramYard, released under MIT license.
+   See LICENSE for details.
+ #}
+
+{## # Representation of a grammar, rich in features. ##}
+
+import Common/Level
+import Common/Position
+import Common/Tag
+import Common/Token
+import RichGrammar/Action
+import RichGrammar/Id
+import RichGrammar/NTerm
+import RichGrammar/TreeDatatype
+import RichGrammar/TreeSymbol
+import RichGrammar/Type
+
+pub open Level
+pub open Position
+pub open Tag
+pub open Token
+
+pub open Action
+pub open Id
+pub open NTerm
+pub open TreeDatatype
+pub open TreeSymbol
+pub open Type
+
+{## Grammar. ##}
+pub data RichGrammar =
+  {## List of tokens (terminals). ##}
+  { tokens       : List Token
+
+  {## List of datatypes related to non-terminals. ##}
+  , datatypes    : List TreeDatatype
+
+  {## List of type definitions (unknown or user-provided types). ##}
+  , typeDefs     : List TypeDef
+
+  {## List of non-terminals. ##}
+  , nterms       : List NTerm
+
+  {## List of tree symbols. ##}
+  , treeSymbols  : List TreeSymbol
+
+  {## List of start symbols. ##}
+  , startSymbols : List TreeSymbolId
+
+  {## Preamble code to be included in the generated parser. ##}
+  , preambleCode : List (Pair Position String)
+  }

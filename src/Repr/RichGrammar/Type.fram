@@ -1,0 +1,27 @@
+{# This file is part of FramYard, released under MIT license.
+   See LICENSE for details.
+ #}
+
+{## # Target types ##}
+
+import open Id
+
+{## Type of entity in the target. ##}
+pub data Type =
+  {## unknown or user-provided type. ##}
+  | TId    of TypeId
+
+  {## Type of the token's payload. ##}
+  | TToken of String
+
+  {## Type of the tree data. ##}
+  | TTree  of TreeDatatypeId
+
+{## Unknown or user-provided type definition. ##}
+pub data TypeDef =
+  {## Type identifier. ##}
+  { id  : TypeId
+
+  {## Type definition (if any). ##}
+  , def : Option String
+  }

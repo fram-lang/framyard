@@ -1,0 +1,28 @@
+{# This file is part of FramYard, released under MIT license.
+   See LICENSE for details.
+ #}
+
+{## # Unique identifiers ##}
+
+{## A type representing unique identifiers. ##}
+abstr data UID =
+  { uid : Int }
+
+{## A function and effect of generating a globally fresh UIDs. ##}
+pub handle (fresh : Unit ->[Fresh] UID) / Fresh =
+  effect () => fn uid => resume (UID { uid }) (uid + 1)
+  return  x => fn _ => x
+  finally c => c 0
+
+{## An module interface for castom UIDs. ##}
+pub data GenUID = GenUID of
+  {## A type representing unique identifiers. ##}
+  { T : type
+
+  {## A function that generates a globally fresh UIDs. ##}
+  , fresh : Unit ->[Fresh] T
+  }
+
+{## A value of the GenUID type, to create abstract types of custom UIDs. ##}
+pub let genUID =
+  GenUID { fresh }

@@ -1,0 +1,16 @@
+{# This file is part of FramYard, released under MIT license.
+   See LICENSE for details.
+ #}
+
+{## # Precedence levels. ##}
+
+{## Datatype that represents precedence levels. ##}
+pub data Level =
+  {## The lowest precedence level. ##}
+  | LBot
+
+  {## Numeric precedence level. ##}
+  | LNum of Int
+
+  {## The highest precedence level. ##}
+  | LTop

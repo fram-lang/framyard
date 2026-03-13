@@ -1,0 +1,22 @@
+{# This file is part of FramYard, released under MIT license.
+   See LICENSE for details.
+ #}
+
+{## # Token definitions ##}
+
+import open Position
+
+{## Token ##}
+pub data Token =
+  {## Position of the token definition. ##}
+  { pos     : Position
+
+  {## The token's name. It is also the name of the token's constructor. ##}
+  , name    : String
+
+  {## Optional type of the token's payload. ##}
+  , argType : Option String
+
+  {## Optional human-readable string representation of the token. ##}
+  , str     : Option String
+  }

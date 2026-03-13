@@ -1,0 +1,28 @@
+{# This file is part of FramYard, released under MIT license.
+   See LICENSE for details.
+ #}
+
+{## # Position in the source code ##}
+
+{## The representation of a position in the source code. ##}
+pub data Position =
+  {## The name of the source file. ##}
+  { fname  : String
+
+  {## The line number (starting from 1). ##}
+  , line   : Int
+
+  {## The number of the character in the file (starting from 0). ##}
+  , cnum   : Int
+
+  {## The number of the first character of the current line (staring from 0).
+  ##}
+  , bol    : Int
+
+  {## The length of the pointed part of the source code. ##}
+  , length : Int
+  }
+
+{## The column number (starting from 1). ##}
+pub method column (pos : Position) : Int =
+  pos.cnum - pos.bol + 1

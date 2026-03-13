@@ -1,0 +1,42 @@
+{# This file is part of FramYard, released under MIT license.
+   See LICENSE for details.
+ #}
+
+{## # Datatypes that store parse trees ##}
+
+import open Common/Tag
+import open Id
+import open Type
+
+{## Definition of a datatype constructor. ##}
+pub data TreeCtor =
+  {## Unique identifier of the constructor. ##}
+  { id    : TreeCtorId
+
+  {## Name of the constructor (it might not be unique). ##}
+  , name  : String
+
+  {## List of types of the constructor arguments. ##}
+  , args  : List Type
+  
+  {## List of the constructor tags.
+
+    Tag conditions refer to the indices of the constructor arguments (starting
+    from 0). ##}
+  , tags  : List (Pair Tag (TagCond Int))
+  }
+
+{## Definition of a datatype used to represent the parse tree.
+
+  Elements of these datatypes might be used in the semantic actions of
+  the production rules, and they are input to the desugaring phase. ##}
+pub data TreeDatatype =
+  {## Unique identifier of the datatype. ##}
+  { id    : TreeDatatypeId
+
+  {## Name of the datatype (it might not be unique). ##}
+  , name  : String
+
+  {## List of constructors of the datatype. ##}
+  , ctors : List TreeCtor
+  }

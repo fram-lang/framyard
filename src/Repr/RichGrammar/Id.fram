@@ -1,0 +1,47 @@
+{# This file is part of FramYard, released under MIT license.
+   See LICENSE for details.
+ #}
+
+{## # Unique identifiers of the grammar objects. ##}
+
+import Utils/UID
+
+# =============================================================================
+# Datatypes
+
+pub let (GenUID { module TreeDataTypeId }) = UID.genUID
+
+{## Unique identifier of a datatype. ##}
+pub type TreeDatatypeId = TreeDataTypeId.T
+
+# =============================================================================
+# Datatype constructors
+
+pub let (GenUID { module TreeCtorId }) = UID.genUID
+
+{## Unique identifier of a constructor. ##}
+pub type TreeCtorId = TreeCtorId.T
+
+# =============================================================================
+# Types
+
+pub let (GenUID { module TypeId }) = UID.genUID
+
+{## Unique identifier of a type. ##}
+pub type TypeId = TypeId.T
+
+# =============================================================================
+# Non-terminals
+
+pub let (GenUID { module NTermId }) = UID.genUID
+
+{## Unique identifier of a non-terminal. ##}
+pub type NTermId = NTermId.T
+
+# =============================================================================
+# Tree symbols
+
+pub let (GenUID { module TreeSymbolId }) = UID.genUID
+
+{## Unique identifier of a tree symbol. ##}
+pub type TreeSymbolId = TreeSymbolId.T

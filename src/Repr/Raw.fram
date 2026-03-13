@@ -1,0 +1,144 @@
+{# This file is part of FramYard, released under MIT license.
+   See LICENSE for details.
+ #}
+
+{## # Raw representation of a grammar
+
+  This representation is used as the result of parsing a grammar file. ##}
+
+import Common/Position
+import Common/Token
+import Common/Tag
+
+pub open Position
+pub open Token
+pub open Tag
+
+{## Identifier ##}
+pub data Ident =
+  {## Position of the identifier in the grammar file. ##}
+  { pos  : Position
+
+  {## Name of the identifier. ##}
+  , name : String
+  }
+
+{## Code block, used for semantic actions and types. ##}
+pub data Code =
+  {## Position of the code block in the grammar file. ##}
+  { pos  : Position
+
+  {## Content of the code block. ##}
+  , code : String
+  }
+
+{## Symbols in the right-hand side of a production. ##}
+pub data Symbol =
+  {## Token symbol, identified by its name. ##}
+  | SToken    of { pos : Position, var : Option Ident }, Ident
+
+  {## Token symbol, identified by a string. ##}
+  | STokenStr of { pos : Position, var : Option Ident }, Ident
+
+  {## Nonterminal symbol. ##}
+  | SNTerm    of { pos : Position, var : Option Ident }, Ident
+
+{## Precedence level and associativity of a production. ##}
+pub data PrecLevel =
+  {## Production is left-associative. ##}
+  | PLLeft of { pos : Position }
+
+  {## Production is right-associative. ##}
+  | PLRight of { pos : Position }
+
+  {## Production is non-associative. ##}
+  | PLNonAssoc of { pos : Position }
+
+  {## Explicit level of a production. ##}
+  | PLLevel of { pos : Position }, Int
+
+  {## Explicit level of a symbol in a production. ##}
+  | PLSymLevel of { pos : Position }, Ident, Int
+
+{## Attributes of a nonterminal production. ##}
+pub data RuleAttr =
+  {## Precedence level and associativity attribute. ##}
+  | RA_PrecLevel of { pos : Position }, List PrecLevel
+  
+  {## Tag attribute. ##}
+  | RA_Tag       of { pos : Position }, Tag, TagCond Ident
+
+  {## Condition that disables the production. ##}
+  | RA_Unless    of { pos : Position }, TagCond Ident
+
+{## Production of a nonterminal, or a tree symbol rule ##}
+pub data Rule =
+  {## Position of the production in the grammar file. ##}
+  { pos     : Position
+
+  {## List of symbols on the right-hand side of the production. ##}
+  , symbols : List Symbol
+
+  {## List of attributes of the production. ##}
+  , attrs   : List RuleAttr
+  }
+
+{## Entry in a nonterminal definition. ##}
+pub data NTermEntry =
+  {## Production. ##}
+  | NTE_Prod of Rule
+
+{## Nonterminal definition. ##}
+pub data NTerm =
+  {## Position of the nonterminal definition in the grammar file. ##}
+  { pos     : Position
+
+  {## Name of the nonterminal. ##}
+  , ident   : Ident
+
+  {## List of entries in the nonterminal definition. ##}
+  , entries : List NTermEntry
+  }
+
+{## Entry in a tree symbol definition. ##}
+pub data TreeSymbolEntry =
+  {## Declaration of a non-terminal related to the tree symbol. ##}
+  | TSE_NTerm of { pos : Position }, Ident
+
+  {## Output type of the tree symbol. ##}
+  | TSE_Type  of { pos : Position }, Code
+
+  {## Rule for constructing the tree symbol. ##}
+  | TSE_Rule  of Rule
+
+{## Definition of a tree symbol. ##}
+pub data TreeSymbol =
+  {## Position of the tree symbol definition in the grammar file. ##}
+  { pos     : Position
+
+  {## Name of the tree symbol. ##}
+  , ident   : Ident
+
+  {## List of entries in the tree symbol definition. ##}
+  , entries : List TreeSymbolEntry
+  }
+
+{## Single definition in a grammar file. ##}
+pub data Def =
+  {## Token definition. ##}
+  | DToken of Token
+
+  {## Declaration of a start symbol. ##}
+  | DStart of Ident
+
+  {## Definition of a nonterminal. ##}
+  | DNTerm of NTerm
+
+  {## Definition of a tree symbol. ##}
+  | DTreeSymbol of TreeSymbol
+
+  {## Code block. ##}
+  | DCode of Code
+
+{## Representation of a grammar file. ##}
+pub type File = List Def
