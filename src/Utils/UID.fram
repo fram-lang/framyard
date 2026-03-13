@@ -14,12 +14,12 @@ pub handle (fresh : Unit ->[Fresh] UID) / Fresh =
   return  x => fn _ => x
   finally c => c 0
 
-{## An module interface for castom UIDs. ##}
+{## A module interface for custom UIDs. ##}
 pub data GenUID = GenUID of
   {## A type representing unique identifiers. ##}
   { T : type
 
-  {## A function that generates a globally fresh UIDs. ##}
+  {## A function that generates globally fresh UIDs. ##}
   , fresh : Unit ->[Fresh] T
   }
 

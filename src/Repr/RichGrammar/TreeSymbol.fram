@@ -4,9 +4,9 @@
 
 {## # Tree Symbols
 
-Tree symbols represents the actual syntactic categories of a language. The
+Tree symbols represent the actual syntactic categories of a language. The
 definition of a tree symbol is a set of patterns that match tree datatypes
-(produced by semantic actions of non-terminals or another tree symbols)
+(produced by semantic actions of non-terminals or other tree symbols)
 together with a semantic action. ##}
 
 import open Common/Tag

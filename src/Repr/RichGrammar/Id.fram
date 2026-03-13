@@ -9,10 +9,10 @@ import Utils/UID
 # =============================================================================
 # Datatypes
 
-pub let (GenUID { module TreeDataTypeId }) = UID.genUID
+pub let (GenUID { module TreeDatatypeId }) = UID.genUID
 
 {## Unique identifier of a datatype. ##}
-pub type TreeDatatypeId = TreeDataTypeId.T
+pub type TreeDatatypeId = TreeDatatypeId.T
 
 # =============================================================================
 # Datatype constructors

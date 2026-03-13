@@ -15,7 +15,7 @@ pub data Position =
   {## The number of the character in the file (starting from 0). ##}
   , cnum   : Int
 
-  {## The number of the first character of the current line (staring from 0).
+  {## The number of the first character of the current line (starting from 0).
   ##}
   , bol    : Int
 
