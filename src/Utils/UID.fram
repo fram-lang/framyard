@@ -8,7 +8,7 @@
 abstr data UID =
   { uid : Int }
 
-{## A function and effect of generating a globally fresh UIDs. ##}
+{## A function and effect for generating a globally fresh UIDs. ##}
 pub handle (fresh : Unit ->[Fresh] UID) / Fresh =
   effect () => fn uid => resume (UID { uid }) (uid + 1)
   return  x => fn _ => x

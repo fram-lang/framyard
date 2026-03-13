@@ -41,7 +41,7 @@ pub data NTerm =
   {## Unique identifier of the non-terminal. ##}
   { id        : NTermId
 
-  {## Name of the non-terminal (might be not unique). ##}
+  {## Name of the non-terminal (might not be unique). ##}
   , name      : String
 
   {## Type of the semantic value of the non-terminal. ##}
