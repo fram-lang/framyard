@@ -31,9 +31,6 @@ pub data TreeSymbolRule =
   {## A pattern of the rule. ##}
   { pattern : Pattern
 
-  {## Tags attached to the rule. ##}
-  , tags    : List (Pair Tag (TagCond Var))
-
   {## Condition that disables the rule. ##}
   , unless  : TagCond Var
 
@@ -48,6 +45,12 @@ pub data TreeSymbol =
 
   {## A name of the tree symbol (might not be unique). ##}
   , name       : String
+
+  {## An optional name of the entry point to the grammar.
+
+    When this name is present, the tree symbol is considered a start symbol of
+    the grammar. ##}
+  , startName  : Option String
 
   {## An input type of the tree symbol (always tree datatype) ##}
   , inputType  : TreeDatatypeId

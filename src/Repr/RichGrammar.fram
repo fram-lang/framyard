@@ -44,9 +44,6 @@ pub data RichGrammar =
   {## List of tree symbols. ##}
   , treeSymbols  : List TreeSymbol
 
-  {## List of start symbols. ##}
-  , startSymbols : List TreeSymbolId
-
   {## Preamble code to be included in the generated parser. ##}
   , preambleCode : List (Pair Position String)
   }

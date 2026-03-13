@@ -16,7 +16,7 @@ pub data Symbol =
   | SToken of { var : Option Var }, String
 
   {## A non-terminal. ##}
-  | SNTerm of { var : Option Var }, NTermId
+  | SNTerm of { var : Var, level : Level }, NTermId
 
 {## Production of a non-terminal. ##}
 pub data NTermProd =

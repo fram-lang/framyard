@@ -22,7 +22,8 @@ pub data TreeCtor =
   {## List of the constructor tags.
 
     Tag conditions refer to the indices of the constructor arguments (starting
-    from 0). ##}
+    from 0). If the same tag appears multiple times, the conditions are
+    combined with a logical OR. ##}
   , tags  : List (Pair Tag (TagCond Int))
   }
 
