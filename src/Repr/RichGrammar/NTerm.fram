@@ -11,17 +11,17 @@ import open Common/Level
 import open Common/Tag
 
 {## Symbol of a production, i.e., token or non-terminal. ##}
-pub data Symbol =
+pub data ProdSymbol =
   {## A token. ##}
-  | SToken of { var : Option Var }, String
+  | PS_Token of { var : Option Var }, String
 
   {## A non-terminal. ##}
-  | SNTerm of { var : Var, level : Level }, NTermId
+  | PS_NTerm of { var : Var, level : Level }, NTermId
 
 {## Production of a non-terminal. ##}
 pub data NTermProd =
   {## List of the production's symbols. ##}
-  { symbols : List Symbol
+  { symbols : List ProdSymbol
 
   {## Precedence level of the production. ##}
   , level   : Level
