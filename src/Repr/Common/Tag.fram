@@ -1,0 +1,20 @@
+{# This file is part of FramYard, released under MIT license.
+   See LICENSE for details.
+ #}
+
+{## # Tags and conditions ##}
+
+{## Tags are represented as strings. ##}
+pub type Tag = String
+
+{## A condition attached to a tag.
+
+  A condition is a positive boolean formula, where atomic propositions check
+  whether a tag is attached to a given node. The type that represents nodes
+  is a parameter of the condition type. ##}
+pub data rec TagCond Node =
+  | TC_True
+  | TC_False
+  | TC_Tag of Tag, Node
+  | TC_And of TagCond Node, TagCond Node
+  | TC_Or  of TagCond Node, TagCond Node

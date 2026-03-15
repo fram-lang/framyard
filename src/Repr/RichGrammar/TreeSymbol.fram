@@ -1,0 +1,63 @@
+{# This file is part of FramYard, released under MIT license.
+   See LICENSE for details.
+ #}
+
+{## # Tree Symbols
+
+Tree symbols represent the actual syntactic categories of a language. The
+definition of a tree symbol is a set of patterns that match tree datatypes
+(produced by semantic actions of non-terminals or other tree symbols)
+together with a semantic action. ##}
+
+import open Common/Tag
+
+import open Action
+import open Id
+import open Type
+
+{## Patterns ##}
+pub data rec Pattern =
+  {## A Variable pattern. ##}
+  | PVar  of Var
+
+  {## A Constructor pattern. ##}
+  | PCtor of TreeCtorId, List Pattern
+
+  {## A view pattern. ##}
+  | PView of TreeSymbolId, Pattern
+
+{## A rule of a tree symbol. ##}
+pub data TreeSymbolRule =
+  {## A pattern of the rule. ##}
+  { pattern : Pattern
+
+  {## Condition that disables the rule. ##}
+  , unless  : TagCond Var
+
+  {## A semantic action of the rule. ##}
+  , action  : Action
+  }
+
+{## Definition of a tree symbol. ##}
+pub data TreeSymbol =
+  {## An identifier of the tree symbol. ##}
+  { id         : TreeSymbolId
+
+  {## A name of the tree symbol (might not be unique). ##}
+  , name       : String
+
+  {## An optional name of the entry point to the grammar.
+
+    When this name is present, the tree symbol is considered a start symbol of
+    the grammar. ##}
+  , startName  : Option String
+
+  {## An input type of the tree symbol (always tree datatype) ##}
+  , inputType  : TreeDatatypeId
+
+  {## An output type of the tree symbol. ##}
+  , outputType : Type
+
+  {## A List of rules of the tree symbol. ##}
+  , rules      : List TreeSymbolRule
+  }

@@ -1,0 +1,52 @@
+{# This file is part of FramYard, released under MIT license.
+   See LICENSE for details.
+ #}
+
+{## # Non-terminals of the grammar. ##}
+
+import open Id
+import open Type
+import open Action
+import open Common/Level
+import open Common/Tag
+
+{## Symbol of a production, i.e., token or non-terminal. ##}
+pub data ProdSymbol =
+  {## A token. ##}
+  | PS_Token of { var : Option Var }, String
+
+  {## A non-terminal. ##}
+  | PS_NTerm of { var : Var, level : Level }, NTermId
+
+{## Production of a non-terminal. ##}
+pub data NTermProd =
+  {## List of the production's symbols. ##}
+  { symbols : List ProdSymbol
+
+  {## Precedence level of the production. ##}
+  , level   : Level
+
+  {## Tags attached to the production. ##}
+  , tags    : List (Pair Tag (TagCond Var))
+
+  {## Condition that disables the production. ##}
+  , unless  : TagCond Var
+
+  {## Action of the production. ##}
+  , action  : Action
+  }
+
+{## Non-terminal ##}
+pub data NTerm =
+  {## Unique identifier of the non-terminal. ##}
+  { id        : NTermId
+
+  {## Name of the non-terminal (might not be unique). ##}
+  , name      : String
+
+  {## Type of the semantic value of the non-terminal. ##}
+  , valueType : Type
+
+  {## List of the non-terminal's productions. ##}
+  , prods     : List NTermProd
+  }

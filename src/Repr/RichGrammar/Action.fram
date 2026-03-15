@@ -1,0 +1,41 @@
+{# This file is part of FramYard, released under MIT license.
+   See LICENSE for details.
+ #}
+
+{## # Semantic actions for the parser. ##}
+
+import open Utils/UID
+import open Common/Position
+import open Id
+import open Type
+
+{## A variable to hold the result of the parsing. ##}
+pub data Var =
+  {## Unique identifier for the variable. ##}
+  { id   : UID
+
+  {## Optional user-provided name for the variable. ##}
+  , name : Option String
+
+  {## The type of the variable. ##}
+  , typ  : Type
+  }
+
+{## A tree expression, used to build the parse tree. ##}
+pub data rec TreeExpr =
+  {## A variable reference. ##}
+  | TE_Var  of Var
+
+  {## A constructor application. ##}
+  | TE_Ctor of TreeCtorId, List TreeExpr
+
+{## A semantic action. ##}
+pub data Action =
+  {## Forward the result. ##}
+  | AForward
+
+  {## Build a tree expression. ##}
+  | ATree of TreeExpr
+
+  {## User-defined action. ##}
+  | ACode of { pos : Position, code : String }
