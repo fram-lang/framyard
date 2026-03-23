@@ -14,9 +14,6 @@ import YaccCodeGen
 
 import Repr/RichGrammar/InternalCheck
 
-{## A pipe operator for better readability. ##}
-let (|>) x f = f x
-
 section
   parameter Repr
   parameter method internalCheck : Repr ->> Unit
