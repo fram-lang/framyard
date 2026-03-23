@@ -12,6 +12,7 @@ is reported.
 
 import open RichGrammar
 
+{## Perform internal consistency checks on the RichGrammar. ##}
 pub method internalCheck (self : RichGrammar) : Unit =
   # TODO: Implement this method.
   ()
