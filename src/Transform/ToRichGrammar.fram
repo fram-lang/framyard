@@ -1,0 +1,27 @@
+{# This file is part of FramYard, released under MIT license.
+   See LICENSE for details.
+ #}
+
+{## # Transformation from Raw to RichGrammar.
+
+The role of this transformation is twofold: first, it performs scope-checking
+and name resolution, and second it produces a more convenient representation
+of the grammar, which is used for subsequent transformations. In particular,
+for each non-terminal a fresh tree datatype is generated with one constructor
+per production.
+##}
+
+import Repr/Raw
+import open Repr/RichGrammar
+
+{## Main transformation function. ##}
+pub let transform (file : Raw.File) : RichGrammar =
+  # TODO: Implement this function.
+  RichGrammar
+    { tokens       = []
+    , datatypes    = []
+    , typeDefs     = []
+    , nterms       = []
+    , treeSymbols  = []
+    , preambleCode = []
+    }

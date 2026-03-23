@@ -1,0 +1,41 @@
+{# This file is part of FramYard, released under MIT license.
+   See LICENSE for details.
+ #}
+
+{## # Pipeline of grammar transformations. ##}
+
+import RawParser
+import Transform/ToRichGrammar
+import Transform/SplitNTermLevels
+import Transform/DeadNTermTagsElim
+import Transform/SplitNTermTags
+import Transform/ResolveTreeSymbolAmbiguities
+import YaccCodeGen
+
+import Repr/RichGrammar/InternalCheck
+
+{## A pipe operator for better readability. ##}
+let (|>) x f = f x
+
+section
+  parameter Repr
+  parameter method internalCheck : Repr ->> Unit
+
+  {## Runs a transformation and checks the result using `internalCheck`
+    method. ##}
+  let runAndCheck (f : _ ->> Repr) input =
+    let result = f input in
+    result.internalCheck;
+    result
+end
+
+{## Runs the whole pipeline of transformations on the given grammar file. ##}
+pub let runPipeline (fileName : String) =
+  fileName
+  |> RawParser.parseFile
+  |> runAndCheck ToRichGrammar.transform
+  |> runAndCheck SplitNTermLevels.transform
+  |> runAndCheck DeadNTermTagsElim.transform
+  |> runAndCheck SplitNTermTags.transform
+  |> runAndCheck ResolveTreeSymbolAmbiguities.transform
+  |> YaccCodeGen.generateCode

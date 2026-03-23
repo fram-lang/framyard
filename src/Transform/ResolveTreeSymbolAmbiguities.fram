@@ -1,0 +1,17 @@
+{# This file is part of FramYard, released under MIT license.
+   See LICENSE for details.
+ #}
+
+{## # Resolve ambiguous rules for tree symbols.
+
+This transformation tries to resolve ambiguities for tree symbols by
+introducing new tree symbols that create some intermediate nodes in the
+parse tree.
+##}
+
+import open Repr/RichGrammar
+
+{## Resolve ambiguities for tree symbols. ##}
+pub let transform (g : RichGrammar) : RichGrammar =
+  # TODO: Implement this function.
+  g

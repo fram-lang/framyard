@@ -1,0 +1,16 @@
+{# This file is part of FramYard, released under MIT license.
+   See LICENSE for details.
+ #}
+
+{## # Split each non-terminal into multiple levels.
+
+This transformation creates a new non-terminal for each level of productions
+of the original non-terminal. Such non-terminals contain only productions of
+the corresponding level and a single production that calls the next level. ##}
+
+import open Repr/RichGrammar
+
+{## Split each non-terminal into multiple levels. ##}
+pub let transform (g : RichGrammar) : RichGrammar =
+  # TODO: Implement this function.
+  g
