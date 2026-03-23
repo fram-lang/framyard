@@ -1,0 +1,12 @@
+{# This file is part of FramYard, released under MIT license.
+   See LICENSE for details.
+ #}
+
+{## # Generate Yacc code for the given grammar. ##}
+
+import open Repr/RichGrammar
+
+{## Generate Yacc code for the given grammar. ##}
+pub let generateCode (g : RichGrammar) : Unit =
+  # TODO: Implement this function.
+  ()

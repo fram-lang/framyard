@@ -1,0 +1,17 @@
+{# This file is part of FramYard, released under MIT license.
+   See LICENSE for details.
+ #}
+
+{## # Internal checker for the RichGrammar
+
+This module provides the `internalCheck` method for the `RichGrammar` type,
+which performs internal consistency checks on the grammar. It checks if there
+are no duplicate or undefined symbols. In case of errors, an internal error
+is reported.
+##}
+
+import open RichGrammar
+
+pub method internalCheck (self : RichGrammar) : Unit =
+  # TODO: Implement this method.
+  ()

@@ -1,0 +1,15 @@
+{# This file is part of FramYard, released under MIT license.
+   See LICENSE for details.
+ #}
+
+{## # Split each non-terminal, depending on the tags it has.
+
+This transformation encodes the tags of non-terminals by splitting them into
+multiple non-terminals, each with a single set of tags. ##}
+
+import open Repr/RichGrammar
+
+{## Split each non-terminal, depending on the tags it has. ##}
+pub let transform (g : RichGrammar) : RichGrammar =
+  # TODO: Implement this function.
+  g
