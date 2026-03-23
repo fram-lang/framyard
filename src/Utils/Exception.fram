@@ -1,0 +1,11 @@
+{# This file is part of FramYard, released under MIT license.
+   See LICENSE for details.
+ #}
+
+{## # Exceptions ##}
+
+{## The effect capability for exceptions. ##}
+pub data Exception E X =
+  {## Raise an exception. ##}
+  { raise : {Y} -> X ->[E] Y
+  }

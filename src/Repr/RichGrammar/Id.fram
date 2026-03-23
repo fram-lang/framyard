@@ -5,6 +5,7 @@
 {## # Unique identifiers of the grammar objects. ##}
 
 import Utils/UID
+import Map
 
 # =============================================================================
 # Datatypes
@@ -14,6 +15,9 @@ pub let (GenUID { module TreeDatatypeId }) = UID.genUID
 {## Unique identifier of a datatype. ##}
 pub type TreeDatatypeId = TreeDatatypeId.T
 
+{## Finite maps from datatype identifiers. ##}
+pub let (Map { module TreeDatatypeMap }) = Map.make { Key = TreeDatatypeId }
+
 # =============================================================================
 # Datatype constructors
 
@@ -21,6 +25,9 @@ pub let (GenUID { module TreeCtorId }) = UID.genUID
 
 {## Unique identifier of a constructor. ##}
 pub type TreeCtorId = TreeCtorId.T
+
+{## Finite maps from constructor identifiers. ##}
+pub let (Map { module TreeCtorMap }) = Map.make { Key = TreeCtorId }
 
 # =============================================================================
 # Types
@@ -30,6 +37,9 @@ pub let (GenUID { module TypeId }) = UID.genUID
 {## Unique identifier of a type. ##}
 pub type TypeId = TypeId.T
 
+{## Finite maps from type identifiers. ##}
+pub let (Map { module TypeMap }) = Map.make { Key = TypeId }
+
 # =============================================================================
 # Non-terminals
 
@@ -38,6 +48,9 @@ pub let (GenUID { module NTermId }) = UID.genUID
 {## Unique identifier of a non-terminal. ##}
 pub type NTermId = NTermId.T
 
+{## Finite maps from non-terminal identifiers. ##}
+pub let (Map { module NTermMap }) = Map.make { Key = NTermId }
+
 # =============================================================================
 # Tree symbols
 
@@ -45,3 +58,6 @@ pub let (GenUID { module TreeSymbolId }) = UID.genUID
 
 {## Unique identifier of a tree symbol. ##}
 pub type TreeSymbolId = TreeSymbolId.T
+
+{## Finite maps from tree symbol identifiers. ##}
+pub let (Map { module TreeSymbolMap }) = Map.make { Key = TreeSymbolId }

@@ -14,6 +14,18 @@ pub handle (fresh : Unit ->[Fresh] UID) / Fresh =
   return  x => fn _ => x
   finally c => c 0
 
+{## An equality of UIDs. ##}
+pub method equal (u1 : UID) (u2 : UID) =
+  u1.uid == u2.uid
+
+{## A total order on UIDs. ##}
+pub method lt (u1 : UID) (u2 : UID) =
+  u1.uid < u2.uid
+
+{## A conversion from UIDs to strings. ##}
+pub method toString (u : UID) =
+  "#" + u.uid.toString
+
 {## A module interface for custom UIDs. ##}
 pub data GenUID = GenUID of
   {## A type representing unique identifiers. ##}
@@ -21,6 +33,15 @@ pub data GenUID = GenUID of
 
   {## A function that generates globally fresh UIDs. ##}
   , fresh : Unit ->[Fresh] T
+
+  {## An equality of UIDs. ##}
+  , method equal : T -> T ->[] Bool
+
+  {## A total order on UIDs. ##}
+  , method lt : T -> T ->[] Bool
+
+  {## A conversion from UIDs to strings. ##}
+  , method toString : T ->[] String
   }
 
 {## A value of the GenUID type, to create abstract types of custom UIDs. ##}
