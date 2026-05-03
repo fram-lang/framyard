@@ -9,8 +9,118 @@ of the original non-terminal. Such non-terminals contain only productions of
 the corresponding level and a single production that calls the next level. ##}
 
 import open Repr/RichGrammar
+import List
+import Utils/UID
+
+let rec insertLevel (level : Level) (levels : List Level) =
+  match levels with
+  | [] => [level]
+  | level' :: levels' =>
+    if level == level' then
+      levels
+    else if level < level' then
+      level :: levels
+    else
+      level' :: insertLevel level levels'
+  end
+
+let collectLevels (prods : List NTermProd) =
+  List.foldLeft
+    (fn levels (prod : NTermProd) => insertLevel prod.level levels)
+    []
+    prods
+
+let levelProds (level : Level) (prods : List NTermProd) =
+  List.filter
+    (fn (prod : NTermProd) => prod.level == level)
+    prods
+
+type LevelIds = List (Pair Level NTermId)
+type IdTable = List (Pair NTermId LevelIds)
+
+let lookupLevelIds (idTable : IdTable) (id : NTermId) =
+  List.findMapErr
+    {~onError = fn _ => impossible ()}
+    (fn ((id', levelIds) : Pair NTermId LevelIds) =>
+      if id == id' then Some levelIds else None)
+    idTable
+
+let rec pickLevelId (level : Level) (levelIds : LevelIds) =
+  match levelIds with
+  | [] => impossible ()
+  | (_, id) :: [] => id
+  | (level', id) :: rest =>
+    if level <= level' then id else pickLevelId level rest
+  end
+
+let lookupNTermId (idTable : IdTable) (id : NTermId) (level : Level) =
+  pickLevelId level (lookupLevelIds idTable id)
+
+let rewriteSymbol (idTable : IdTable) sym =
+  match sym with
+  | PS_Token _ => sym
+  | PS_NTerm {var, level} id =>
+    PS_NTerm {var, level} (lookupNTermId idTable id level)
+  end
+
+let rewriteProd (idTable : IdTable) (NTermProd {module Prod}) =
+  NTermProd
+    { module Prod
+    , symbols = List.map (rewriteSymbol idTable) Prod.symbols
+    }
+
+let tagsForLevel level prods =
+  levelProds level prods
+  |> List.concatMap (fn (prod : NTermProd) => prod.tags)
+
+let forwardVar (nt : NTerm) =
+  Var {id = UID.fresh (), name = None, typ = nt.valueType}
+
+let forwardProd (nt : NTerm) level nextLevel nextId =
+  NTermProd
+    { symbols =
+        [PS_NTerm {var = forwardVar nt, level = nextLevel} nextId]
+    , level
+    , tags = tagsForLevel nextLevel nt.prods
+    , unless = TC_True
+    , action = AForward
+    }
+
+let rec splitLevels (idTable : IdTable) (nt : NTerm) (levelIds : LevelIds) =
+  match levelIds with
+  | [] => []
+  | (level, id) :: rest =>
+    let prods =
+      levelProds level nt.prods
+      |> List.map (rewriteProd idTable)
+    let prods =
+      match rest with
+      | [] => prods
+      | (nextLevel, nextId) :: _ =>
+        prods + [forwardProd nt level nextLevel nextId]
+      end
+    in
+    NTerm
+      { id
+      , name = nt.name + "@" + level.toString
+      , valueType = nt.valueType
+      , prods
+      } :: splitLevels idTable nt rest
+  end
+
+let freshLevelIds levels =
+  List.map (fn level => (level, NTermId.fresh ())) levels
+
+let ntermLevelIds (nt : NTerm) =
+  (nt.id, freshLevelIds (collectLevels nt.prods))
 
 {## Split each non-terminal into multiple levels. ##}
-pub let transform (g : RichGrammar) : RichGrammar =
-  # TODO: Implement this function.
-  g
+pub let transform (RichGrammar {module G}) : RichGrammar =
+  let idTable = List.map ntermLevelIds G.nterms in
+  RichGrammar
+    { module G
+    , nterms =
+        G.nterms
+        |> List.concatMap
+            (fn nt => splitLevels idTable nt (lookupLevelIds idTable nt.id))
+    }

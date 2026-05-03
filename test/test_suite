@@ -1,0 +1,5 @@
+function framyard_tests {
+  simple_test test/TestAll.fram
+}
+
+run_with_flags framyard_tests "-L src -L test"

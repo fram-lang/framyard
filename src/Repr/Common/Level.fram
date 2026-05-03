@@ -14,3 +14,35 @@ pub data Level =
 
   {## The highest precedence level. ##}
   | LTop
+
+{## Equality of levels. ##}
+pub method equal (l1 : Level) (l2 : Level) =
+  match (l1, l2) with
+  | (LBot, LBot) => True
+  | (LTop, LTop) => True
+  | (LNum n1, LNum n2) => n1 == n2
+  | _ => False
+  end
+
+{## Strict order on levels. ##}
+pub method lt (l1 : Level) (l2 : Level) =
+  match (l1, l2) with
+  | (LBot, LBot) => False
+  | (LBot, _) => True
+  | (_, LBot) => False
+  | (LTop, _) => False
+  | (_, LTop) => True
+  | (LNum n1, LNum n2) => n1 < n2
+  end
+
+{## Non-strict order on levels. ##}
+pub method le (l1 : Level) (l2 : Level) =
+  l1 == l2 || l1 < l2
+
+{## Convert level to string. ##}
+pub method toString (level : Level) =
+  match level with
+  | LBot => "bot"
+  | LTop => "top"
+  | LNum n => n.toString
+  end
