@@ -1,0 +1,191 @@
+{# This file is part of FramYard, released under MIT license.
+   See LICENSE for details.
+ #}
+
+import open Testing
+import /List
+import open Repr/RichGrammar
+import Transform/SplitNTermLevels
+import Utils/UID
+
+let pos =
+  Position 
+    { fname = "<test>"
+    , line = 1
+    , cnum = 0
+    , bol = 0
+    , length = 0
+    }
+
+let action name = ACode {pos, code = name}
+
+let tokenProd level token =
+  NTermProd
+    { symbols = [PS_Token {var = None} token]
+    , level
+    , tags = []
+    , unless = TC_True
+    , action = action token
+    }
+
+let var name =
+  Var {id = UID.fresh (), name = Some name, typ = TToken "Expr"}
+
+let exprSym id level name =
+  PS_NTerm {var = var name, level} id
+
+let infixProdWithTags level leftLevel token rightLevel tags exprId =
+  NTermProd
+    { symbols =
+        [ exprSym exprId leftLevel "lhs"
+        , PS_Token {var = None} token
+        , exprSym exprId rightLevel "rhs"
+        ]
+    , level
+    , tags
+    , unless = TC_True
+    , action = action token
+    }
+
+let parenProd exprId =
+  NTermProd
+    { symbols =
+        [ PS_Token {var = None} "LPAREN"
+        , exprSym exprId (LNum 0) "inner"
+        , PS_Token {var = None} "RPAREN"
+        ]
+    , level = LTop
+    , tags = []
+    , unless = TC_True
+    , action = action "paren"
+    }
+
+let mkNTerm id name prods =
+  NTerm {id, name, valueType = TToken name, prods}
+
+let mkGrammar nterms =
+  RichGrammar
+    { tokens = []
+    , datatypes = []
+    , typeDefs = []
+    , nterms
+    , treeSymbols = []
+    , preambleCode = []
+    }
+
+let isForwardProd (NTermProd {symbols, tags, unless, action}) =
+  match (symbols, unless, action) with
+  | ([PS_NTerm _], TC_True, AForward) => True
+  | _ => False
+  end
+
+let hasTrueTag tag (prod : NTermProd) =
+  List.exists
+    (fn ((prodTag, cond) : Pair Tag (TagCond Var)) =>
+      prodTag == tag &&
+      match cond with
+      | TC_True => True
+      | _ => False
+      end)
+    prod.tags
+
+let countProds (f : NTermProd ->[] Bool) (nterms : List NTerm) =
+  List.foldLeft
+    (fn acc (NTerm {prods}) =>
+      acc + List.length (List.filter f prods))
+    0
+    nterms
+
+let allProds (nterms : List NTerm) =
+  List.concatMap (fn (NTerm {prods}) => prods) nterms
+
+let hasProdAtLevel (level : Level) (nterm : NTerm) =
+  List.exists
+    (fn (prod : NTermProd) =>
+      prod.level == level && not (isForwardProd prod))
+    nterm.prods
+
+let countNTermsWithLevel (level : Level) (nterms : List NTerm) =
+  List.length (List.filter (hasProdAtLevel level) nterms)
+
+let hasTaggedForward tag (nterm : NTerm) =
+  List.exists
+    (fn (prod : NTermProd) => isForwardProd prod && hasTrueTag tag prod)
+    nterm.prods
+
+let sampleGrammar () =
+  let exprId = NTermId.fresh () in
+  let expr =
+    mkNTerm exprId "Expr"
+      [ infixProdWithTags
+          (LNum 0)
+          (LNum 0)
+          "PLUS"
+          (LNum 10)
+          []
+          exprId
+      , infixProdWithTags
+          (LNum 10)
+          (LNum 10)
+          "STAR"
+          LTop
+          [("multiplicative", TC_True)]
+          exprId
+      , tokenProd LTop "NUMBER"
+      , parenProd exprId
+      ]
+  in
+  mkGrammar [expr]
+
+let sample = sampleGrammar ()
+
+let transformedSample =
+  SplitNTermLevels.transform sample
+
+let _ =
+
+testSuite "SplitNTermLevels" (fn _ =>
+
+  testCase "creates one non-terminal per production level" (fn _ =>
+    let result = transformedSample in
+    assertEq 3 (List.length result.nterms);
+    expectEq 1 (countNTermsWithLevel (LNum 0) result.nterms);
+    expectEq 1 (countNTermsWithLevel (LNum 10) result.nterms);
+    expectEq 1 (countNTermsWithLevel LTop result.nterms));
+
+  testCase "keeps original productions only on their own levels" (fn _ =>
+    let result = transformedSample in
+    let nonForwardProds =
+      allProds result.nterms |> List.filter (fn prod => not (isForwardProd prod))
+    in
+    assertEq 4 (List.length nonForwardProds);
+    expectEq 1
+      (List.length
+        (List.filter
+          (fn (prod : NTermProd) => prod.level == LNum 0)
+          nonForwardProds));
+    expectEq 1
+      (List.length
+        (List.filter
+          (fn (prod : NTermProd) => prod.level == LNum 10)
+          nonForwardProds));
+    expectEq 2
+      (List.length
+        (List.filter
+          (fn (prod : NTermProd) => prod.level == LTop)
+          nonForwardProds)));
+
+  testCase "adds forwarding productions between adjacent levels" (fn _ =>
+    let result = transformedSample in
+    assertEq 2 (countProds isForwardProd result.nterms));
+
+  testCase "forwards semantic action and tags from the level above" (fn _ =>
+    let result = transformedSample in
+    let bottomLevelWithTaggedForward =
+      result.nterms
+      |> List.filter
+          (fn (nterm : NTerm) =>
+            hasProdAtLevel (LNum 0) nterm &&
+            hasTaggedForward "multiplicative" nterm)
+    in
+    assertEq 1 (List.length bottomLevelWithTaggedForward)))
