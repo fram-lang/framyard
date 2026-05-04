@@ -36,14 +36,12 @@ let levelProds (level : Level) (prods : List NTermProd) =
     prods
 
 type LevelIds = List (Pair Level NTermId)
-type IdTable = List (Pair NTermId LevelIds)
+type IdTable = NTermMap.T LevelIds
 
 let lookupLevelIds (idTable : IdTable) (id : NTermId) =
-  List.findMapErr
+  idTable.findErr
     {~onError = fn _ => impossible ()}
-    (fn ((id', levelIds) : Pair NTermId LevelIds) =>
-      if id == id' then Some levelIds else None)
-    idTable
+    id
 
 let rec pickLevelId (level : Level) (levelIds : LevelIds) =
   match levelIds with
@@ -111,12 +109,14 @@ let rec splitLevels (idTable : IdTable) (nt : NTerm) (levelIds : LevelIds) =
 let freshLevelIds levels =
   List.map (fn level => (level, NTermId.fresh ())) levels
 
-let ntermLevelIds (nt : NTerm) =
-  (nt.id, freshLevelIds (collectLevels nt.prods))
+let addNTermLevelIds (idTable : IdTable) (nt : NTerm) =
+  idTable.add nt.id (freshLevelIds (collectLevels nt.prods))
 
 {## Split each non-terminal into multiple levels. ##}
 pub let transform (RichGrammar {module G}) : RichGrammar =
-  let idTable = List.map ntermLevelIds G.nterms in
+  let idTable =
+    List.foldLeft addNTermLevelIds NTermMap.empty G.nterms
+  in
   RichGrammar
     { module G
     , nterms =
